@@ -1,32 +1,26 @@
+import React, { useEffect } from "react";
 import { Container, Row, Col } from "react-bootstrap";
-import { useEffect, useState } from "react";
-import axios from "axios";
-
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchTodos,
+  deleteTodo,
+  selectIsLoading,
+  selectTodos,
+} from "./features/todoSlice";
 import { ShimmerText } from "react-shimmer-effects";
 
 function App() {
-  const [todos, setTodos] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const dispatch = useDispatch();
+  const todos = useSelector(selectTodos);
+  const isLoading = useSelector(selectIsLoading);
 
   useEffect(() => {
-    const fetchTodos = async () => {
-      try {
-        const response = await axios.get(
-          "https://jsonplaceholder.typicode.com/todos/"
-        );
+    dispatch(fetchTodos() as any);
+  }, [dispatch]);
 
-        setTodos(response.data);
-
-        setTimeout(() => {
-          setIsLoading(false); // Set isLoading to false after data is fetched
-        }, 1000);
-      } catch (error) {
-        console.log(error);
-        setIsLoading(false); // Handle error and set isLoading to false
-      }
-    };
-    fetchTodos();
-  }, []);
+  const handleDelete = (todoId: number) => {
+    dispatch(deleteTodo(todoId) as any);
+  };
 
   return (
     <div className="App">
@@ -35,13 +29,19 @@ function App() {
           {todos.map((todo) => (
             <Col className="border p-3 col-md-4" key={todo.id}>
               {isLoading ? (
-                <div className="w-100">
+                <div>
                   <ShimmerText line={2} gap={10} />
                 </div>
               ) : (
                 <>
                   <h4>{todo.title}</h4>
                   <p>Completed: {todo.completed ? "Yes" : "No"}</p>
+                  <button
+                    className="btn btn-danger"
+                    onClick={() => handleDelete(todo.id)}
+                  >
+                    Delete
+                  </button>
                 </>
               )}
             </Col>
