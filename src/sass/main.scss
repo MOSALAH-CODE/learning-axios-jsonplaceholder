@@ -1,0 +1,39 @@
+@import "../../node_modules/bootstrap/scss/bootstrap";
+
+.shimmer {
+  background: #f0f0f0; /* Shimmer background color */
+  position: relative;
+  overflow: hidden;
+  animation: shimmer 2s infinite; /* Adjust animation speed as needed */
+}
+
+.shimmer-line {
+  position: relative;
+  height: 20px; /* Adjust the height of the shimmer lines as needed */
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.5),
+    transparent
+  );
+  background-size: 200% 100%;
+  animation: shimmer-line 2s infinite; /* Adjust animation speed as needed */
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes shimmer-line {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
