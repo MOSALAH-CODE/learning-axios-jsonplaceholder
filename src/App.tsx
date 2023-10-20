@@ -3,7 +3,7 @@ import { Container, Row, Col } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchTodos,
-  deleteTodo,
+  deleteTodoLocal,
   selectIsLoading,
   selectTodos,
 } from "./features/todoSlice";
@@ -19,7 +19,7 @@ function App() {
   }, [dispatch]);
 
   const handleDelete = (todoId: number) => {
-    dispatch(deleteTodo(todoId) as any);
+    dispatch(deleteTodoLocal(todoId) as any);
   };
 
   return (
@@ -34,8 +34,8 @@ function App() {
                 </div>
               ) : (
                 <>
-                  <h4>{todo.title}</h4>
-                  <p>Completed: {todo.completed ? "Yes" : "No"}</p>
+                  <h4>{todo.myTitle}</h4>
+                  <p>Completed: {todo.myCompleted ? "Yes" : "No"}</p>
                   <button
                     className="btn btn-danger"
                     onClick={() => handleDelete(todo.id)}

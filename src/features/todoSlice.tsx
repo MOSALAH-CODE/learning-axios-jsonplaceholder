@@ -3,13 +3,33 @@ import { RootState } from "../app/store";
 
 import axios from "axios";
 
-export const fetchTodos = createAsyncThunk<Todo[]>(
+interface ITodoApi {
+  userId: number;
+  id: number;
+  title: string;
+  completed: boolean;
+}
+
+interface ITodo {
+  userId: number;
+  id: number;
+  myTitle: string;
+  myCompleted: boolean;
+}
+
+export const fetchTodos = createAsyncThunk<ITodo[]>(
   "todos/fetchTodos",
   async () => {
     const response = await axios.get(
       "https://jsonplaceholder.typicode.com/todos?_limit=10"
     );
-    return response.data as Todo[];
+    const todos: ITodoApi[] = response.data;
+    return todos.map((todo) => ({
+      userId: todo.userId,
+      id: todo.id,
+      myTitle: todo.title,
+      myCompleted: todo.completed,
+    })) as ITodo[];
   }
 );
 
@@ -30,10 +50,14 @@ export const deleteTodo = createAsyncThunk<number, number>(
 const todoSlice = createSlice({
   name: "todos",
   initialState: { data: [], isLoading: true } as {
-    data: Todo[];
+    data: ITodo[];
     isLoading: boolean;
   },
-  reducers: {},
+  reducers: {
+    deleteTodoLocal: (state, action) => {
+      state.data = state.data.filter((todo) => todo.id !== action.payload);
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchTodos.pending, (state) => {
@@ -45,12 +69,11 @@ const todoSlice = createSlice({
       })
       .addCase(fetchTodos.rejected, (state) => {
         state.isLoading = false;
-      })
-      .addCase(deleteTodo.fulfilled, (state, action) => {
-        state.data = state.data.filter((todo) => todo.id !== action.payload);
       });
   },
 });
+
+export const { deleteTodoLocal } = todoSlice.actions;
 
 export const selectTodos = (state: RootState) => state.todos.data;
 export const selectIsLoading = (state: RootState) => state.todos.isLoading;
